@@ -340,14 +340,16 @@ func checkShellCompleteFlag(a *App, arguments []string) (bool, []string) {
 		return false, arguments
 	}
 
-	pos := len(arguments) - 1
-	lastArg := arguments[pos]
-
-	if lastArg != "--generate-bash-completion" {
-		return false, arguments
+	for i, arg := range arguments {
+		if arg == "--" {
+			return false, arguments
+		}
+		if arg == "--generate-bash-completion" {
+			args := append(arguments[:i], arguments[i+1:]...)
+			return true, args
+		}
 	}
-
-	return true, arguments[:pos]
+	return false, arguments
 }
 
 func checkCompletions(c *Context) bool {
